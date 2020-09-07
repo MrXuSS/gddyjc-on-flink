@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="GBK"?>
+<!--
+如果希望关闭某个代码块的样式检查（虽然我们不建议这样做），可以按照如下语法，在源码中增加一些注释：
+  // scalastyle:off
+  ...  // 这块内容将不会启用样式检查
+  // scalastyle:on
+
+你也可以只关闭某一个检查规则，只需要指定好检查的规则id。如下所示：
+  // scalastyle:off no.finalize
+  override def finalize(): Unit = ...
+  // scalastyle:on no.finalize
+
+该文件包含三部分内容：
+（1）第一部分为我们强制禁止的。
+（2）第二部分是我们希望强制禁止的，但是存在一些争议，或者原代码中过多违反规则，存在历史问题。
+（3）第三部分是我们不希望检查的内容，因此关闭了scala-style 里的默认检查。
+-->
+
+<scalastyle>
+    <name>Scalastyle standard configuration</name>
+
+    <!-- ================================================================================ -->
+    <!--                               我们强制禁止                                        -->
+    <!-- ================================================================================ -->
+
+    <check level="error" class="org.scalastyle.file.FileTabChecker" enabled="true">
+        <customMessage>曾经有人说，Tab是魔鬼！不要使用Tab，用两个空格代替。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="true">
+        <customMessage>+ 号附近增加空格可以增强代码可读性。加号后面加上空格</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="true">
+        <customMessage>+ 号附近增加空格可以增强代码可读性。加号前面加上空格。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true">
+        <customMessage>行末增加空格会在文件比较时产生问题。行末不要加空格。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
+        <parameters>
+            <!--      为了写一些注释，可能长度会超过100-->
+            <parameter name="maxLineLength"><![CDATA[160]]></parameter>
+            <parameter name="tabSize"><![CDATA[2]]></parameter>
+            <parameter name="ignoreImports">true</parameter>
+        </parameters>
+        <customMessage>每行内容过长会增加阅读负担，且需要滚动。 检查行是否过长。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true">
+        <parameters>
+            <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
+        </parameters>
+        <customMessage>类的命名需要符合规范。 类请以首字母大写的方式命名。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true">
+        <parameters>
+            <parameter name="regex"><![CDATA[(config|[A-Z][A-Za-z]*)]]></parameter>
+        </parameters>
+        <customMessage>对象的命名需要符合规范。 对象请以首字母大写的方式命名（config开头也可）。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.PackageObjectNamesChecker" enabled="true">
+        <parameters>
+            <parameter name="regex"><![CDATA[^[a-z][A-Za-z]*$]]></parameter>
+        </parameters>
+        <customMessage>对象的命名需要符合规范。 包对象请以首字母小写的方式命名。</customMessage>
+    </check>
+
+    <check customId="argcount" level="error" class="org.scalastyle.scalariform.ParameterNumberChecker" enabled="true">
+        <parameters>
+            <parameter name="maxParameters"><![CDATA[10]]></parameter>
+        </parameters>
+        <customMessage>参数过多会造成阅读困难。请减少入参数量</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true">
+        <customMessage>finalize() 方法是在GC阶段被调用，但GC时机并不可控，因此不应当依赖finalize() 方法。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true">
+        <customMessage>错误地定义一个协变的equals()方法，而不复写java.lang.Object的equals方法会导致运行时异常。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.StructuralTypeChecker" enabled="true">
+        <customMessage>Scala中的结构化类型会用到反射。可能造成不可预计的性能损失。注意：这个检查器有时会对lambda类型和类似的结构造成误判，必要时可以关闭</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.UppercaseLChecker" enabled="true">
+        <customMessage>某些字体下，小写的L(l) 看起来像阿拉伯数字1。请用大写L</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.IfBraceChecker" enabled="true">
+        <parameters>
+            <parameter name="singleLineAllowed"><![CDATA[true]]></parameter>
+            <parameter name="doubleLineAllowed"><![CDATA[true]]></parameter>
+        </parameters>
+        <customMessage>if 表达式若只有一行可以写在一行，else若表达式只有一行也可写在一行。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true">
+        <customMessage>public 的方法要加上Type检查。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true">
+        <customMessage>一些版本控制系统对文件结尾不包含空行的支持不好。文件结尾带上空行。</customMessage>
+    </check>
+
+
+    <check level="error" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true">
+        <customMessage>注释符号后加上空格可以增加可读性。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker" enabled="true">
+        <parameters>
+            <parameter name="tokens">ARROW, EQUALS, ELSE, TRY, CATCH, FINALLY, LARROW, RARROW</parameter>
+        </parameters>
+        <customMessage>某些符号前后加上空格可以增加可读性。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker" enabled="true">
+        <parameters>
+            <parameter name="tokens">ARROW, EQUALS, COMMA, COLON, IF, ELSE, DO, WHILE, FOR, MATCH, TRY, CATCH, FINALLY,
+                LARROW, RARROW
+            </parameter>
+        </parameters>
+        <customMessage>某些符号前后加上空格可以增加可读性。</customMessage>
+    </check>
+
+    <!-- ??? usually shouldn't be checked into the code base. -->
+    <check level="error" class="org.scalastyle.scalariform.NotImplementedErrorUsage" enabled="true">
+        <customMessage>存在??? 说明有些代码没有实现，请检查。</customMessage>
+    </check>
+
+    <!-- As of SPARK-7558, all tests in Spark should extend o.a.s.SparkFunSuite instead of FunSuite directly -->
+    <!--<check customId="funsuite" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">-->
+        <!--<parameters>-->
+            <!--<parameter name="regex">^FunSuite[A-Za-z]*$</parameter>-->
+        <!--</parameters>-->
+        <!--<customMessage>测试必须继承org.apache.spark.SparkFunSuite.</customMessage>-->
+    <!--</check>-->
+
+    <!-- As of SPARK-7977 all printlns need to be wrapped in '// scalastyle:off/on println' -->
+    <check customId="println" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">^println$</parameter>
+        </parameters>
+        <customMessage><![CDATA[确认需要使用 println 吗? 如果是， 添加如下注释：
+      // scalastyle:off println
+      println(...)
+      // scalastyle:on println]]></customMessage>
+    </check>
+
+    <check customId="hadoopconfiguration" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">spark(.sqlContext)?.sparkContext.hadoopConfiguration</parameter>
+        </parameters>
+        <customMessage><![CDATA[
+      确认要使用 sparkContext.hadoopConfiguration 吗? 大多数情况应当使用 spark.sessionState.newHadoopConf()，这样hadoop配置项
+      才能够生效。如果一定要这么做，按如下方式注释
+      // scalastyle:off hadoopconfiguration
+      spark.sparkContext.hadoopConfiguration...
+      // scalastyle:on hadoopconfiguration
+    ]]></customMessage>
+    </check>
+
+    <check customId="visiblefortesting" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">@VisibleForTesting</parameter>
+        </parameters>
+        <customMessage><![CDATA[
+      @VisibleForTesting  会造成classpath问题。
+    ]]></customMessage>
+    </check>
+
+    <check customId="runtimeaddshutdownhook" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">Runtime\.getRuntime\.addShutdownHook</parameter>
+        </parameters>
+        <customMessage><![CDATA[
+      确认要使用 Runtime.getRuntime.addShutdownHook吗? 大多数情况下应当使用
+      ShutdownHookManager.addShutdownHook instead.
+      如果一定要这么做，按如下方式注释
+      // scalastyle:off runtimeaddshutdownhook
+      Runtime.getRuntime.addShutdownHook(...)
+      // scalastyle:on runtimeaddshutdownhook
+    ]]></customMessage>
+    </check>
+
+    <check customId="mutablesynchronizedbuffer" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">mutable\.SynchronizedBuffer</parameter>
+        </parameters>
+        <customMessage><![CDATA[
+      确认要使用 mutable.SynchronizedBuffer 吗? 大多数情况下应当使用
+      java.util.concurrent.ConcurrentLinkedQueue .
+      如果一定要这么做，按如下方式注释
+      // scalastyle:off mutablesynchronizedbuffer
+      mutable.SynchronizedBuffer[...]
+      // scalastyle:on mutablesynchronizedbuffer
+    ]]></customMessage>
+    </check>
+
+    <check customId="awaitresult" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">Await\.result</parameter>
+        </parameters>
+        <customMessage><![CDATA[
+      确认要使用 Await.result 吗? 大多数情况下应当使用 ThreadUtils.awaitResult.
+      如果一定要这么做，按如下方式注释
+      // scalastyle:off awaitresult
+      Await.result(...)
+      // scalastyle:on awaitresult
+    ]]></customMessage>
+    </check>
+
+    <check customId="awaitready" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">Await\.ready</parameter>
+        </parameters>
+        <customMessage><![CDATA[
+      确认要使用 Await.ready 吗? 大多数情况下应当使用 ThreadUtils.awaitReady.
+      如果一定要这么做，按如下方式注释
+      // scalastyle:off awaitready
+      Await.ready(...)
+      // scalastyle:on awaitready
+    ]]></customMessage>
+    </check>
+
+    <!-- As of SPARK-9613 JavaConversions should be replaced with JavaConverters -->
+    <check customId="javaconversions" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">JavaConversions</parameter>
+        </parameters>
+        <customMessage>不要引入隐式转换的 scala.collection.JavaConversions._, 使用 import
+            scala.collection.JavaConverters._ 并使用 .asScala / .asJava 方法
+        </customMessage>
+    </check>
+
+    <check customId="commonslang2" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">org\.apache\.commons\.lang\.</parameter>
+        </parameters>
+        <customMessage>使用 Commons Lang 3 classes (package org.apache.commons.lang3.*) 不要使用
+            of Commons Lang 2 (package org.apache.commons.lang.*)
+        </customMessage>
+    </check>
+
+    <check customId="extractopt" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">extractOpt</parameter>
+        </parameters>
+        <customMessage>使用 jsonOption(x).map(.extract[T]) 不要使用 .extractOpt[T], 后者更慢。</customMessage>
+    </check>
+
+    <!--
+    此处会检查import的顺序，如果使用IDEA，请做如下配置：
+    Editor-> CodeStyle -> Scala -> imports 标签 -> import Layout
+    java
+    javax
+    _______ blank line _______
+    scala
+    _______ blank line _______
+    all other imports
+    _______ blank line _______
+    com.databricks  // or org.apache.spark if you are working on spark
+    -->
+    <check level="error" class="org.scalastyle.scalariform.ImportOrderChecker" enabled="true">
+        <parameters>
+            <parameter name="groups">java,scala,3rdParty,spark</parameter>
+            <parameter name="group.java">javax?\..*</parameter>
+            <parameter name="group.scala">scala\..*</parameter>
+            <parameter name="group.3rdParty">(?!org\.apache\.flink\.).*</parameter>
+            <parameter name="group.flink">org\.apache\.flink\..*</parameter>
+        </parameters>
+        <customMessage>注意import的引入顺序，依次为 java-scala-第三方-flink</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker" enabled="true">
+        <parameters>
+            <parameter name="tokens">COMMA</parameter>
+        </parameters>
+        <customMessage>逗号前不要有空格</customMessage>
+    </check>
+
+    <!-- SPARK-3854: Single Space between ')' and '{' -->
+    <check customId="SingleSpaceBetweenRParenAndLCurlyBrace" level="error" class="org.scalastyle.file.RegexChecker"
+           enabled="true">
+        <parameters>
+            <parameter name="regex">\)\{</parameter>
+        </parameters>
+        <customMessage><![CDATA[
+      ')' 和 `{` 之间增加空格
+    ]]></customMessage>
+    </check>
+
+    <check customId="NoScalaDoc" level="error" class="org.scalastyle.file.RegexChecker" enabled="false">
+        <parameters>
+            <parameter name="regex">(?m)^(\s*)/[*][*].*$(\r|)\n^\1 [*]</parameter>
+        </parameters>
+        <customMessage>使用 Javadoc 样式来格式化多行注释</customMessage>
+    </check>
+
+    <check customId="OmitBracesInCase" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
+        <parameters>
+            <parameter name="regex">case[^\n>]*=>\s*\{</parameter>
+        </parameters>
+        <customMessage>case子句中省略花括号</customMessage>
+    </check>
+
+    <!-- SPARK-16877: Avoid Java annotations -->
+    <check level="error" class="org.scalastyle.scalariform.OverrideJavaChecker" enabled="true">
+        <customMessage>使用scala的override关键字，而不要使用Java的</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.DeprecatedJavaChecker" enabled="true">
+        <customMessage>使用scala的deprecated关键字，而不要使用Java的</customMessage>
+    </check>
+
+    <!-- ================================================================================ -->
+    <!--                                     希望强制禁止                                  -->
+    <!-- ================================================================================ -->
+
+    <check level="error" class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" enabled="true">
+        <customMessage>左花括号前后不要有空格</customMessage>
+    </check>
+    <check level="error" class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" enabled="true">
+        <customMessage>左花括号前后不要有空格</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.MethodNamesChecker" enabled="false">
+        <parameters>
+            <parameter name="regex"><![CDATA[^[a-z][A-Za-z0-9]*$]]></parameter>
+        </parameters>
+        <customMessage>方法名称请符合小驼峰形式。注意：可能会造成一些符号方法的报错，注意关闭。</customMessage>
+    </check>
+
+    <check level="error" class="org.scalastyle.scalariform.EqualsHashCodeChecker" enabled="true">
+        <customMessage>equals 和 hashCode方法需要被同时重写</customMessage>
+    </check>
+
+    <!-- ================================================================================ -->
+    <!--                               我们不希望检查的内容                                -->
+    <!-- ================================================================================ -->
+
+    <!-- 不属于非法导入 -->
+    <check level="error" class="org.scalastyle.scalariform.IllegalImportsChecker" enabled="false">
+        <parameters>
+            <parameter name="illegalImports"><![CDATA[sun._,java.awt._]]></parameter>
+        </parameters>
+    </check>
+
+    <!-- 我们使用了他的反例： NewLineAtEofChecker -->
+    <!--<check level="error" class="org.scalastyle.file.NoNewLineAtEofChecker" enabled="false"></check>-->
+
+    <!-- 这个检查会误判很多随机情况。 -->
+    <!--<check level="error" class="org.scalastyle.scalariform.SimplifyBooleanExpressionChecker" enabled="false"></check>-->
+
+    <!-- 我们会使用一些return来作为守卫和返回 -->
+    <!--<check level="error" class="org.scalastyle.scalariform.ReturnChecker" enabled="false"></check>-->
+
+    <!-- 为了配合一些第三方插件 -->
+    <!--<check level="error" class="org.scalastyle.scalariform.NullChecker" enabled="false"></check>-->
+
+    <!-- 方法长度不用过于严格. -->
+    <check level="error" class="org.scalastyle.scalariform.MethodLengthChecker" enabled="false">
+        <parameters>
+            <parameter name="maxLength">50</parameter>
+        </parameters>
+    </check>
+
+</scalastyle>
