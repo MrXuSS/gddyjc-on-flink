@@ -8,7 +8,7 @@ package com.haiyi.dyjc.entity
  *  */
 
 case class BjlNewPower(
-                           ROWKEY: String,
+                            ROWKEY: String,
                             CLDBS: String, // 测量点标识
                             SJSJ: String, // 数据时间
                             ZYGGL: Double,// 总有功功率
@@ -35,7 +35,7 @@ case class BjlNewPower(
  */
 case class BjlTransformer(
                            MP_ID: String,  // 计量点标识
-                            CAPACITY: Double,  // 容量， 用来计算负载率
+                           CAPACITY: Double,  // 容量， 用来计算负载率
                            BL: Double  // 倍率， 用来计算负载率
                            )
 
