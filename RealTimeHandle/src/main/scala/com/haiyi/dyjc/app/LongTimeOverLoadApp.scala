@@ -2,7 +2,7 @@ package com.haiyi.dyjc.app
 
 import com.haiyi.dyjc.entity.Sources.{BjlNewPowerSource, BjlTransformerSource}
 import com.haiyi.dyjc.entity.{BjlNewPower, BjlTransformer}
-import com.haiyi.dyjc.utils.TransformerConnectNewPower
+import com.haiyi.dyjc.functions.TransformerConnectNewPower
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
@@ -34,7 +34,7 @@ object LongTimeOverLoadApp {
 
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
-    env.setParallelism(10)
+    env.setParallelism(3)
 
     env.setStateBackend(new RocksDBStateBackend("file:///D:/Program/WorkSpace/IDEA_WorkSpace/gddyjc-on-flink/RockDBState"))
 

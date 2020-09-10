@@ -23,7 +23,7 @@ object Sources {
 
     override def run(ctx: SourceFunction.SourceContext[BjlNewPower]): Unit = {
       while (!isFinished) {
-        Thread.sleep(5000)
+        Thread.sleep(1000)
       }
       fileReader = new FileReader("D:\\Work\\电压监测测试Flink\\部分数据\\b_jl_new_power_sort.txt")
       bufferedReader = new BufferedReader(fileReader)
