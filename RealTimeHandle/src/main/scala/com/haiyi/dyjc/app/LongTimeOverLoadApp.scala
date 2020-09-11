@@ -2,8 +2,10 @@ package com.haiyi.dyjc.app
 
 import com.haiyi.dyjc.entity.Sources.{BjlNewPowerSource, BjlTransformerSource}
 import com.haiyi.dyjc.entity.{BjlNewPower, BjlTransformer}
-import com.haiyi.dyjc.functions.TransformerConnectNewPower
+import com.haiyi.dyjc.functions.{TransformerConnectNewPower, TransformerConnectNewPower2}
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
+import org.apache.flink.runtime.state.StateBackend
+import org.apache.flink.runtime.state.filesystem.FsStateBackend
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
 
@@ -25,7 +27,13 @@ import org.apache.flink.streaming.api.scala._
  *         衍生问题： 若数据来回跳动， 就会造成最终的结果不准确。
  *              (数据丢失， 如例：121 131 121 131， 两个阶段都不认为该数据在自己的范围内连续)。
  *
- *         现采取解决方式1.  已解决数据重复问题
+ *         现采取解决方式1.  已解决数据重复问题。 当130状态达到触发点清除120的状态
+ *         衍生问题： 例如 120State的数据还没有到达触发点， 130到了触发点会删除120的状态， 若再来120范围的数据会重新积累状态！
+ *
+ *         问题3： 当前程序的 minTime180 和 load180Head.ts 不相等， 原因暂未查出！！！
+ *
+ *         思考1： 将档案表的数据存储在Redis中，处理单条流。
+ *
  */
 
 object LongTimeOverLoadApp {
@@ -34,9 +42,10 @@ object LongTimeOverLoadApp {
 
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
-    env.setParallelism(3)
+    env.setParallelism(10)
 
-    env.setStateBackend(new RocksDBStateBackend("file:///D:/Program/WorkSpace/IDEA_WorkSpace/gddyjc-on-flink/RockDBState"))
+    val rocksDBStateBackend: StateBackend = new RocksDBStateBackend("file:///D:/Program/WorkSpace/IDEA_WorkSpace/gddyjc-on-flink/RockDBState")
+    env.setStateBackend(rocksDBStateBackend)
 
     val bjlTransformerSource: BjlTransformerSource = new BjlTransformerSource
 
@@ -46,7 +55,7 @@ object LongTimeOverLoadApp {
     // 根据测量点标识进行关联
     bjlTransformerStream.keyBy(_.MP_ID)
       .connect(bjlNewPowerStream.keyBy(_.CLDBS))
-        .process(new TransformerConnectNewPower)
+        .process(new TransformerConnectNewPower2)
         .print()
 
     env.execute("LongTimeOverLoadApp")

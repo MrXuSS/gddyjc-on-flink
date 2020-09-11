@@ -47,16 +47,6 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
     new ListStateDescriptor[LoadResult]("load180State", TypeInformation.of(classOf[LoadResult]))
   )
 
-  // 标识各阶段负载率数据的最小时间戳
-  var minTime120: Long = -1
-  var minTime130: Long = -1
-  var minTime150: Long = -1
-  var minTime160: Long = -1
-  var minTime180: Long = -1
-
-  // 标识程序是否为刚开始运行
-  var isFirst: Boolean = true
-
   override def open(parameters: Configuration): Unit = {
 
   }
@@ -73,11 +63,6 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
   override def processElement2(value: BjlNewPower,
                                ctx: CoProcessFunction[BjlTransformer, BjlNewPower, LongTimeLoadView]#Context,
                                out: Collector[LongTimeLoadView]): Unit = {
-    // 抽取之前各阶段负载率时间的最小值，该方法只执行一次
-    if (isFirst) {
-      getBeforeMinTime()
-      isFirst = false
-    }
 
     val bjlTransformer: BjlTransformer = bjlTransformerState.get(value.CLDBS)
     if(bjlTransformer != null) {
@@ -118,12 +103,7 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
         load180Head = load180State.get().iterator().next()
       }
 
-      if(load180Head != null && load180Head.ts != minTime180) {
-        println((loadFactor, load180Head.ts, minTime180))
-      }
       // 解决数据重复问题， 先判断范围小的数据， 当负载率超过180持续时间达到最大限制时，删除120 130 150 160大范围的数据，输出最严重的负载率报警
-      // 新来的数据和list中的第一条数据的时间进行比较， 若大于最大限度时间就输出。
-//      if(minTime180 != -1 && ts - minTime180 >= 0.5 * 60 * 60 * 1000 ) {
       if(load180Head != null && ts - load180Head.ts >= 0.5 * 60 * 60 * 1000 ) {
         val list180 = load180State.get().toList
         clearState(List(120, 130, 150, 160))
@@ -137,7 +117,7 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
         load160Head = load160State.get().iterator().next()
       }
 
-      if(minTime160 != -1 && ts - minTime160 >= 1 * 60 * 60 * 1000 ) {
+      if(load160Head != null && ts - load160Head.ts >= 1 * 60 * 60 * 1000 ) {
         val list160 = load160State.get().toList
         clearState(List(120, 130, 150))
         out.collect(LongTimeLoadView(bjlTransformer.MP_ID,
@@ -150,7 +130,7 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
         load150Head = load150State.get().iterator().next()
       }
 
-      if(minTime150 != -1 && ts - minTime150 >= 2 * 60 * 60 * 1000 ) {
+      if(load150Head != null && ts - load150Head.ts >= 2 * 60 * 60 * 1000 ) {
         val list150 = load150State.get().toList
         clearState(List(120, 130))
         out.collect(LongTimeLoadView(bjlTransformer.MP_ID,
@@ -163,7 +143,7 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
         load130Head = load130State.get().iterator().next()
       }
 
-      if(minTime130 != -1 && ts - minTime130 >= 4 * 60 * 60 * 1000 ) {
+      if(load130Head != null && ts - load130Head.ts >= 4 * 60 * 60 * 1000 ) {
         val list130 = load130State.get().toList
         clearState(List(120))
         out.collect(LongTimeLoadView(bjlTransformer.MP_ID,
@@ -176,32 +156,13 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
         load120Head = load120State.get().iterator().next()
       }
 
-      if(minTime120 != -1 && ts - minTime120 >= 8 * 60 * 60 * 1000 ) {
+      if(load120Head != null && ts - load120Head.ts >= 8 * 60 * 60 * 1000 ) {
         val list120 = load120State.get().toList
         out.collect(LongTimeLoadView(bjlTransformer.MP_ID,
                                     list120.map(_.LoadFactor).min,
                                     list120.map(_.LoadFactor).max,
                                     "long_load_120"))
       }
-    }
-  }
-
-  // 获取之前的各阶段负载率最小时间戳,该方法只执行一遍
-  def getBeforeMinTime(): Unit = {
-    if (load120State.get().iterator().hasNext) {
-      minTime120 = load120State.get().iterator().next().ts
-    }
-    if (load130State.get().iterator().hasNext) {
-      minTime130 = load130State.get().iterator().next().ts
-    }
-    if (load150State.get().iterator().hasNext) {
-      minTime150 = load150State.get().iterator().next().ts
-    }
-    if (load160State.get().iterator().hasNext) {
-      minTime160 = load160State.get().iterator().next().ts
-    }
-    if (load180State.get().iterator().hasNext) {
-      minTime180 = load180State.get().iterator().next().ts
     }
   }
 
@@ -213,15 +174,10 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
     for (num <- nums) {
       num match {
         case 120 => load120State.clear()
-          minTime120 = -1
         case 130 => load130State.clear()
-          minTime130 = -1
         case 150 => load150State.clear()
-          minTime150 = -1
         case 160 => load160State.clear()
-          minTime160 = -1
         case 180 => load180State.clear()
-          minTime180 = -1
         // scalastyle:off println
         case _ => println("输入的负载率阶段数值错误！！！")
         // scalastyle:on println
@@ -238,15 +194,10 @@ class TransformerConnectNewPower extends CoProcessFunction[BjlTransformer, BjlNe
       for (num <- nums) {
         num match {
           case 120 => load120State.add(loadResult)
-            if ( minTime120 == -1 ) { minTime120 = ts}
           case 130 => load130State.add(loadResult)
-            if ( minTime130 == -1 ) { minTime130 = ts}
           case 150 => load150State.add(loadResult)
-            if ( minTime150 == -1 ) { minTime150 = ts}
           case 160 => load160State.add(loadResult)
-            if ( minTime160 == -1 ) { minTime160 = ts}
           case 180 => load180State.add(loadResult)
-            if ( minTime180 == -1 ) { minTime180 = ts}
           // scalastyle:off println
           case _ => println("输入的负载率阶段数值错误！！！")
           // scalastyle:on println
