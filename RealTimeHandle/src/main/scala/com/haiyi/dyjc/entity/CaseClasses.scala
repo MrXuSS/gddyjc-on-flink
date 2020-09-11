@@ -66,6 +66,6 @@ case class LoadLastTimeAndDurTime(
                                  MP_ID: String,
                                  var LAST_TIME: Long,  // 上次时间
                                  var DUR_TIME: Long, // 持续时间
-                                 var MIN_VALUE: Double, //记录当前负载率阶段的最小值
-                                 var MAX_VALUE: Double //记录当前负载率阶段的最小值
+                                 var MIN_VALUE: Double, // 记录当前负载率阶段的最小值
+                                 var MAX_VALUE: Double // 记录当前负载率阶段的最小值
                                  )
